@@ -7,11 +7,13 @@ import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -27,7 +29,9 @@ import org.springframework.util.IdGenerator;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -100,6 +104,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         //调用mapper接口将数据添加到数据库
         employeeMapper.save(employee);
 
+    }
+
+    @Override
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        Integer count = employeeMapper.count();
+        employeePageQueryDTO.setPage(employeePageQueryDTO.getPage() - 1);
+        /*System.out.println("Name: " + employeePageQueryDTO.getName());
+        System.out.println("Page: " + employeePageQueryDTO.getPage());
+        System.out.println("PageSize: " + employeePageQueryDTO.getPageSize());*/
+        List<Employee> records = employeeMapper.getEmplist(employeePageQueryDTO);
+        return new PageResult(count,records);
     }
 
 }
