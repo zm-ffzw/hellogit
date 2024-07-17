@@ -86,4 +86,24 @@ public class EmployeeController {
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
     }
+
+    //启用、禁用账号
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status,Long id){
+        employeeService.startOrStop(status,id);
+        return Result.success();
+    }
+
+    @GetMapping("/{id}")
+    public Result<Employee> getById(@PathVariable Long id){
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    @PutMapping
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        employeeService.update(employeeDTO);
+        return Result.success();
+
+    }
 }

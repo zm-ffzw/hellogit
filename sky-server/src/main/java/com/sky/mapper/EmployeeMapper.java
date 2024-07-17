@@ -30,4 +30,9 @@ public interface EmployeeMapper {
     //List<Employee> getEmplist(Integer start, EmployeePageQueryDTO employeePageQueryDTO);*/
 
     List<Employee> getEmplist(EmployeePageQueryDTO employeePageQueryDTO);
+
+    void startOrStop(Employee employee);
+
+    @Select("select * from employee where id = #{id}")
+    Employee getById(Long id);
 }
