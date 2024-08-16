@@ -12,6 +12,20 @@
         </where>
         limit #{page}, #{pageSize}
     </select>
+
+    <select id="getCategoryList" resultType="com.sky.entity.Category">
+        select * from category
+        <where>
+            <if test="name != null and name.trim() != ''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="type != null">
+                type = #{type}
+            </if>
+        </where>
+        limit #{page}, #{pageSize}
+    </select>
+
     <update id="startOrStop" parameterType="com.sky.entity.Employee">
         update employee
         <set>
@@ -35,6 +49,31 @@
             </if>
             <if test="idNumber != null">
                 id_number = #{idNumber},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="gainCategory">
+        insert into category (type, name, sort, status, create_time, update_time, create_user, update_user)
+        VALUES (#{type}, #{name}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+    </update>
+    <update id="updateCategory">
+        update category
+        <set>
+            <if test="name != null and name.trim() != ''">
+                name = #{name},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
             </if>
             <if test="updateTime != null">
                 update_time = #{updateTime},

@@ -1,13 +1,11 @@
 package com.sky.service.impl;
 
-import com.sky.constant.JwtClaimsConstant;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.EmployeeDTO;
-import com.sky.dto.EmployeeLoginDTO;
-import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.*;
+import com.sky.entity.Category;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
@@ -15,22 +13,13 @@ import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
-import com.sky.utils.JwtUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.val;
-import org.apache.http.HttpRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-import org.springframework.util.IdGenerator;
 
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -141,4 +130,42 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.startOrStop(employee);
     }
 
+    @Override
+    public void gainCategory(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDTO,category);
+        category.setStatus(0);
+/*        category.setCreateTime(LocalDateTime.now());
+        category.setUpdateTime(LocalDateTime.now());
+        category.setUpdateUser(BaseContext.getCurrentId());
+        category.setCreateUser(BaseContext.getCurrentId());*/
+        employeeMapper.gainCategory(category);
+    }
+
+    @Override
+    public PageResult pageQueryCategory(CategoryPageQueryDTO categoryPageQueryDTO) {
+        categoryPageQueryDTO.setPage(categoryPageQueryDTO.getPage() - 1);
+        Integer total = employeeMapper.countCategory();
+        List<Category> records = employeeMapper.getCategoryList(categoryPageQueryDTO);
+        return new PageResult(total,records);
+    }
+
+    @Override
+    public void deleteCategory(Integer id) {
+        employeeMapper.deleteCatege(id);
+    }
+
+    @Override
+    public void updateCategory(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDTO,category);
+       /* category.setUpdateTime(LocalDateTime.now());
+        category.setUpdateUser(BaseContext.getCurrentId());*/
+        employeeMapper.updateCategory(category);
+    }
+
+    @Override
+    public void updateCategoryStatus(Integer status, Integer id) {
+        employeeMapper.updateCategoryStatus(status,id);
+    }
 }
