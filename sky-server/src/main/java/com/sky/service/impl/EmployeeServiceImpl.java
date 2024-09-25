@@ -20,6 +20,7 @@ import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -167,5 +168,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void updateCategoryStatus(Integer status, Integer id) {
         employeeMapper.updateCategoryStatus(status,id);
+    }
+
+    @Override
+    public List<Category> list(Integer type) {
+        return employeeMapper.list(type);
     }
 }

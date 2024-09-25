@@ -40,7 +40,6 @@ public interface EmployeeMapper {
     @Select("select * from employee where id = #{id}")
     Employee getById(Long id);
 
-
     @AotoFill(value = OperationType.INSERT)
     void gainCategory(Category category);
 
@@ -57,4 +56,12 @@ public interface EmployeeMapper {
 
     @Update("update category set status = #{status} where id = #{id}")
     void updateCategoryStatus(Integer status, Integer id);
+
+    /**
+     * 根据类型查询分类
+     * @param type
+     * @return
+     */
+    List<Category> list(Integer type);
+
 }

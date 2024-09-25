@@ -12,7 +12,6 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -36,7 +35,6 @@ public class AotoFillAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();//方法签名对象
         AotoFill aotoFill = signature.getMethod().getAnnotation(AotoFill.class);//获取方法上的注解对象
         OperationType value = aotoFill.value();//获取数据库操作类型
-
 
         //获取到当前拦截的方法参数--实体对象
         Object[] args = joinPoint.getArgs();//获取实体对象

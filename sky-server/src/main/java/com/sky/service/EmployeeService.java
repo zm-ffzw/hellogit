@@ -1,8 +1,11 @@
 package com.sky.service;
 
 import com.sky.dto.*;
+import com.sky.entity.Category;
 import com.sky.entity.Employee;
 import com.sky.result.PageResult;
+
+import java.util.List;
 
 public interface EmployeeService {
 
@@ -32,4 +35,7 @@ public interface EmployeeService {
     void updateCategory(CategoryDTO categoryDTO);
 
     void updateCategoryStatus(Integer status, Integer id);
+
+
+    List<Category> list(Integer type);
 }

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 //自定义注解
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AotoFill {
+public @interface  AotoFill {
     //数据库操作类型
     OperationType value();
 }
