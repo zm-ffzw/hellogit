@@ -3,9 +3,51 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.DishMapper">
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-
         insert into dish (id, name, category_id, price, image, description, status, create_time, update_time,
                           create_user, update_user)
         VALUES (#{id},#{name},#{categoryId},#{price},#{image},#{description},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser})
     </insert>
+
+    <!--    分页查询    -->
+    <select id="page" resultType="com.sky.vo.DishVO">
+        select dish.*,dish_flavor.name as categoryName from dish left outer join dish_flavor on dish.id = dish_flavor.dish_id
+        <where>
+            <if test="name != null">
+                dish.name like concat('%',#{name},'%')
+            </if>
+        <if test="categoryId != null">
+            and dish.category_id = #{categoryId}
+        </if>
+        <if test="status != null">
+            and dish.status = #{status}
+        </if>
+        </where>
+        order by dish.create_time desc
+    </select>
+
+<!--    修改菜品     -->
+    <update id="update">
+        update dish
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="status != null">
+                status = #{status}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 </mapper>
