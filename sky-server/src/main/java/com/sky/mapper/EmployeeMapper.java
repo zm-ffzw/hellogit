@@ -43,8 +43,8 @@ public interface EmployeeMapper {
     @AotoFill(value = OperationType.INSERT)
     void gainCategory(Category category);
 
-    @Select("select count(*) from category")
-    public Integer countCategory();
+    //@Select("select count(*) from category")
+    public Integer countCategory(CategoryPageQueryDTO categoryPageQueryDTO);
 
     List<Category> getCategoryList(CategoryPageQueryDTO categoryPageQueryDTO);
 

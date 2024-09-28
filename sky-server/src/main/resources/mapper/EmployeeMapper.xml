@@ -36,6 +36,19 @@
         order by sort asc,create_time desc
     </select>
 
+    <select id="countCategory" resultType="java.lang.Integer">
+        select count(*) from category
+        <where>
+            <if test="name != null and name.trim() != ''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="type != null">
+                AND type = #{type}
+            </if>
+        </where>
+    </select>
+
+
     <update id="startOrStop" parameterType="com.sky.entity.Employee">
         update employee
         <set>

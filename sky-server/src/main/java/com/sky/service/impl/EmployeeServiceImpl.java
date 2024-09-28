@@ -145,8 +145,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public PageResult pageQueryCategory(CategoryPageQueryDTO categoryPageQueryDTO) {
-        categoryPageQueryDTO.setPage(categoryPageQueryDTO.getPage() - 1);
-        Integer total = employeeMapper.countCategory();
+        categoryPageQueryDTO.setPage((categoryPageQueryDTO.getPage() - 1)* categoryPageQueryDTO.getPageSize());
+        Integer total = employeeMapper.countCategory(categoryPageQueryDTO);
         List<Category> records = employeeMapper.getCategoryList(categoryPageQueryDTO);
         return new PageResult(total,records);
     }

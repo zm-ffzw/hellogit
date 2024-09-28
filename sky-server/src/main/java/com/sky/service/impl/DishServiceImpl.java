@@ -52,7 +52,7 @@ public class DishServiceImpl implements DishService {
     //分类分页查询
     public PageResult page(DishPageQueryDTO dishPageQueryDTO) {
         Integer count = dishMapper.getCount();
-        dishPageQueryDTO.setPageSize(dishPageQueryDTO.getPageSize() - 1);
+        dishPageQueryDTO.setPage((dishPageQueryDTO.getPage() - 1)* dishPageQueryDTO.getPageSize());
         List<DishVO> dishVOS = dishMapper.page(dishPageQueryDTO);
         return new PageResult(count,dishVOS);
     }
@@ -107,5 +107,22 @@ public class DishServiceImpl implements DishService {
             flavors.forEach(dishFlavor -> dishFlavor.setDishId(dishDTO.getId()));
             dishFlavorMapper.insertBatch(flavors);
         }
+    }
+
+
+    public void updateStatus(Integer id,Integer status) {
+        Dish dish = new Dish();
+        dish.setStatus(status);
+        dish.setId(Integer.toUnsignedLong(id));
+        dishMapper.update(dish);
+    }
+
+    //分类id查找菜品
+    public List<Dish> getListById(Long categoryId) {
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .build();
+        return dishMapper.list(dish);
     }
 }

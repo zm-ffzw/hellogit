@@ -23,9 +23,11 @@
         </if>
         </where>
         order by dish.create_time desc
+        limit #{page},#{pageSize}
     </select>
 
-<!--    修改菜品     -->
+
+    <!--    修改菜品     -->
     <update id="update">
         update dish
         <set>
@@ -50,4 +52,27 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="getListById" resultType="com.sky.entity.Dish">
+        select dish from setmal_dish where id = #{id}
+    </select>
+
+    <select id="list" resultType="Dish" parameterType="Dish">
+        select * from dish
+        <where>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+<!--    <select id="getBysetmaelId" resultType="com.sky.entity.Dish">-->
+<!--        select dish* from dish lefe join setmeal_id where setmeal_id = #{id}-->
+<!--    </select>-->
 </mapper>
