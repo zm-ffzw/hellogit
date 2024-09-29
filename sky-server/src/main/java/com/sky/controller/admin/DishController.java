@@ -8,20 +8,29 @@ import com.sky.result.Result;
 import com.sky.service.DishService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/admin/dish")
 public class DishController {
     @Autowired
     private DishService dishService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @PostMapping
     @ApiOperation("新增菜品")
     public Result save(@RequestBody DishDTO dishDTO){
         dishService.saveWithFlavor(dishDTO);
+
+        //清理缓存数据
+        String key = "dish_" + dishDTO.getCategoryId();
+        cleanRedis("key");
+
         return Result.success();
     }
 
@@ -36,6 +45,10 @@ public class DishController {
     @DeleteMapping
     public Result delete(@RequestParam List<Long> ids){
         dishService.deleteBatch(ids);
+
+        //清理缓存
+        cleanRedis("dish_*");
+
         return Result.success();
     }
 
@@ -50,6 +63,10 @@ public class DishController {
     @PutMapping
     public Result update(@RequestBody DishDTO dishDTO){
         dishService.update(dishDTO);
+
+        //清理缓存
+        cleanRedis("dish_*");
+
         return Result.success();
     }
 
@@ -57,6 +74,10 @@ public class DishController {
     @PostMapping("/status/{status}")
     public Result updateStatus(Integer id,@PathVariable Integer status){
         dishService.updateStatus(id,status);
+
+        //清理缓存
+        cleanRedis("dish_*");
+
         return Result.success();
     }
 
@@ -65,5 +86,11 @@ public class DishController {
     public Result<List<Dish>> getListById(Long categoryId){
         List<Dish> list = dishService.getListById(categoryId);
         return Result.success(list);
+    }
+
+    //清理缓存数据
+    public void cleanRedis(String pattern){
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 }
