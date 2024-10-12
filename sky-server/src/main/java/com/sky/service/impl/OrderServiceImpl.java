@@ -3,16 +3,20 @@ package com.sky.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersDTO;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -138,5 +142,22 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+    }
+
+    @Transactional
+    public PageResult page(OrdersPageQueryDTO ordersPageQueryDTO) {
+        Long userId = BaseContext.getCurrentId();
+        int count = orderMapper.count(userId);
+        ordersPageQueryDTO.setPage((ordersPageQueryDTO.getPage() - 1) * ordersPageQueryDTO.getPageSize());
+        //分页查所有orders
+        List<OrdersDTO> ordersDTOList = orderMapper.page(ordersPageQueryDTO);
+        
+        //detailMapper查询,并放入redis
+        for (OrdersDTO ordersDTO : ordersDTOList) {
+            Long orderId = ordersDTO.getId();
+            List<OrderDetail> orderDetailList = orderDetailMapper.select(orderId);
+            ordersDTO.setOrderDetails(orderDetailList);
+        }
+        return new PageResult(count,ordersDTOList);
     }
 }
