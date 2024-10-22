@@ -1,20 +1,26 @@
 package com.sky.task;
 
+import com.alibaba.fastjson.JSON;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
+import com.sky.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
 public class OrderTask {
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private WebSocketServer webSocketServer;
     //订单超时响应
     @Scheduled(cron = "0 * * * * ?")
     public void processTimeoutOrder(){
@@ -45,6 +51,30 @@ public class OrderTask {
             for(Orders order : list){
                 order.setStatus(Orders.COMPLETED);
                 orderMapper.update(order);
+            }
+        }
+    }
+
+    //@Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "*/10 * * * * *")
+    public void pySuccess(){
+
+        //查询未支付
+        List<Orders> list = orderMapper.getByNoSuccess(Orders.PENDING_PAYMENT);
+
+        //修改状态，并且发送消息
+        if(list != null && list.size() > 0){
+            for(Orders order : list){
+                order.setStatus(Orders.TO_BE_CONFIRMED);
+                orderMapper.update(order);
+
+                //通过websocket推送·消息
+                Map map = new HashMap();
+                map.put("type",1);//1表示来单提醒，2客户催单
+                map.put("orderId",order.getId());
+                map.put("content","订单号："+order.getNumber());
+                Object json = JSON.toJSON(map);
+                webSocketServer.sendToAllClient(json.toString());
             }
         }
     }

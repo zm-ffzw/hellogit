@@ -1,11 +1,9 @@
 package com.sky.mapper;
 
-import com.sky.dto.OrdersDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,12 +26,24 @@ public interface OrderMapper {
 
     //分业查询orders
 
-    List<OrdersDTO> page(OrdersPageQueryDTO ordersPageQueryDTO);
+    List<Orders> page(OrdersPageQueryDTO ordersPageQueryDTO);
 
-    @Select("select count(*) from orders")
+    @Select("select count(*) from orders where user_id = #{userId}")
     int count(Long userId);
 
     //查询超时订单
     @Select("select * from orders where status = #{pendingPayment} and order_time < #{time}")
     List<Orders> getByStatusAndOrderTimeLt(Integer pendingPayment, LocalDateTime time);
+
+    @Select("select * from orders where id = #{id}")
+    Orders getById(Long id);
+
+    @Select("select count(*) from orders")
+    int allCount();
+
+    @Select("select count(*) from orders where status = #{status}")
+    Integer countStatus(Integer status);
+
+    @Select("select * from orders where status = #{status}")
+    List<Orders> getByNoSuccess(Integer status);
 }
