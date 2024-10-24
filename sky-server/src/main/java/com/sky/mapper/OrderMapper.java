@@ -52,4 +52,6 @@ public interface OrderMapper {
     Double sumByMap(Map map);
 
     Integer userStatistics(Map map);
+
+    Integer getCount(Map map);
 }
