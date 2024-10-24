@@ -61,6 +61,6 @@ public interface OrderMapper {
 
     @Select("select od.name,sum(od.number) number from orders o left join order_detail od on o.id = od.order_id " +
             "where o.order_time between #{begin} and #{end} and status = #{status} " +
-            "group by od.name order by number desc limit 10")
+            "group by od.name order by number desc")
     List<GoodsSalesDTO> getSalesTop10(LocalDate begin, LocalDate end, Integer status);
 }
