@@ -50,4 +50,6 @@ public interface OrderMapper {
 
     //@Select("select sum(amount) from orders where order_time between #{beginTime} and #{endTime} and status = #{status}")
     Double sumByMap(Map map);
+
+    Integer userStatistics(Map map);
 }
