@@ -40,4 +40,11 @@ public class ReportController {
         OrderReportVO orderReportVO = reportService.ordersStatistics(begin,end);
         return Result.success(orderReportVO);
     }
+
+    //前十商品
+    @GetMapping("/top10")
+    public Result<SalesTop10ReportVO> top10(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+        SalesTop10ReportVO salesTop10ReportVO = reportService.top10(begin,end);
+        return Result.success(salesTop10ReportVO);
+    }
 }

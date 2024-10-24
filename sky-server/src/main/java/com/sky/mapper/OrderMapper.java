@@ -1,12 +1,16 @@
 package com.sky.mapper;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Mapper
 public interface OrderMapper {
@@ -54,4 +58,9 @@ public interface OrderMapper {
     Integer userStatistics(Map map);
 
     Integer getCount(Map map);
+
+    @Select("select od.name,sum(od.number) number from orders o left join order_detail od on o.id = od.order_id " +
+            "where o.order_time between #{begin} and #{end} and status = #{status} " +
+            "group by od.name order by number desc limit 10")
+    List<GoodsSalesDTO> getSalesTop10(LocalDate begin, LocalDate end, Integer status);
 }
