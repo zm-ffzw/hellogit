@@ -4,13 +4,19 @@ import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.service.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.service.WorkspaceService;
+import com.sky.vo.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,6 +26,8 @@ import java.util.*;
 public class ReportServiceImpl implements ReportService {
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private WorkspaceService workspaceService;
     //营业饿统计
     public TurnoverReportVO turnoverStatistics(LocalDate begin, LocalDate end) {
         List<LocalDate> localDateList = new ArrayList<>();
@@ -35,8 +43,8 @@ public class ReportServiceImpl implements ReportService {
             LocalDateTime endTime = LocalDateTime.of(localDate, LocalTime.MAX);
 
             Map map = new HashMap();
-            map.put("beginTime", beginTime);
-            map.put("endTime", endTime);
+            map.put("begin", beginTime);
+            map.put("end", endTime);
             map.put("status", Orders.COMPLETED);
             //select sum(amount) from orders where between beginTime and endTime and status = ....
             Double turnover = orderMapper.sumByMap(map);
@@ -160,5 +168,54 @@ public class ReportServiceImpl implements ReportService {
                 .nameList(StringUtils.join(nameList,","))
                 .numberList(StringUtils.join(numberList,","))
                 .build();
+    }
+
+    //数据报表导出
+    public void exportBusinessData(HttpServletResponse response) {
+        //获取时间
+        LocalDate beginTime = LocalDate.now().plusDays(-30);
+        LocalDate endTime = LocalDate.now().plusDays(-1);
+        BusinessDataVO businessData = workspaceService.getBusinessData(LocalDateTime.of(beginTime, LocalTime.MIN), LocalDateTime.of(endTime, LocalTime.MAX));
+
+        //填入报表
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("template/运营数据报表模板.xlsx");
+        try {
+            //基于模版，创建一个excel文件
+            XSSFWorkbook excel = new XSSFWorkbook(in);
+            //获取当前业
+            XSSFSheet sheet = excel.getSheet("Sheet1");
+            //填充数据
+            sheet.getRow(1).getCell(1).setCellValue("时间："+beginTime+"至"+endTime);
+            //获取4,5行
+            sheet.getRow(3).getCell(2).setCellValue(businessData.getTurnover());
+            sheet.getRow(3).getCell(4).setCellValue(businessData.getOrderCompletionRate());
+            sheet.getRow(3).getCell(6).setCellValue(businessData.getNewUsers());
+            sheet.getRow(4).getCell(2).setCellValue(businessData.getValidOrderCount());
+            sheet.getRow(4).getCell(4).setCellValue(businessData.getUnitPrice());
+
+            //明细数据写入
+            for (int i = 0; i < 30; i++){
+                LocalDate date = beginTime.plusDays(i);
+                LocalDateTime begin = LocalDateTime.of(date, LocalTime.MIN);
+                LocalDateTime end = LocalDateTime.of(date, LocalTime.MAX);
+                BusinessDataVO businessData1 = workspaceService.getBusinessData(begin, end);
+
+                XSSFRow sheetRow = sheet.getRow(7 + i);
+                sheetRow.getCell(1).setCellValue(date.toString());
+                sheetRow.getCell(2).setCellValue(businessData1.getTurnover());
+                sheetRow.getCell(3).setCellValue(businessData1.getValidOrderCount());
+                sheetRow.getCell(4).setCellValue(businessData1.getOrderCompletionRate());
+                sheetRow.getCell(5).setCellValue(businessData1.getUnitPrice());
+                sheetRow.getCell(6).setCellValue(businessData1.getNewUsers());
+            }
+            //通过数出流将文件下载到客户端浏览器
+            ServletOutputStream out = response.getOutputStream();
+            excel.write(out);
+            //关流
+            out.close();
+            excel.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
