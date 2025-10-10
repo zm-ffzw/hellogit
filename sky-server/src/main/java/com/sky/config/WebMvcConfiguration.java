@@ -37,13 +37,13 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     /**
      * 注册自定义拦截器
      *
-     * @param registry
+     * @param registry //拦截器注册表
      */
     protected void addInterceptors(InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
-        registry.addInterceptor(jwtTokenAdminInterceptor)
-                .addPathPatterns("/admin/**")
-                .excludePathPatterns("/admin/employee/login");
+        registry.addInterceptor(jwtTokenAdminInterceptor) //指定拦截器对哪些路径进行拦截
+                .addPathPatterns("/admin/**") //拦截的路径
+                .excludePathPatterns("/admin/employee/login"); //放行的路径
         registry.addInterceptor(jwtTokenUserInterceptor)
                 .addPathPatterns("/user/**")
                 .excludePathPatterns("/user/shop/status")

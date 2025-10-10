@@ -53,7 +53,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
 
-        //密码比对
         //
         //更该密码格式
         password = DigestUtils.md5DigestAsHex(password.getBytes());
