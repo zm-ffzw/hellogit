@@ -1,10 +1,12 @@
 package com.sky.controller.admin;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.sky.constant.MessageConstant;
 import com.sky.result.Result;
 import com.sky.utils.AliOssUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin/common")
-@Api(tags = "通用接口")
+@Tag(name = "通用接口")
 @Slf4j
 public class CommonController {
     @Autowired
@@ -25,7 +27,6 @@ public class CommonController {
 
     //阿里云文件上传
     @PostMapping("/upload")
-    @ApiOperation("文件上传")
     public Result<String> upload(MultipartFile file){
         log.info("文件上传:{}", file);
         try {

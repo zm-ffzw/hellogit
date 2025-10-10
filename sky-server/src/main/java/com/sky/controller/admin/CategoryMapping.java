@@ -7,7 +7,7 @@ import com.sky.entity.Category;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +60,7 @@ public class CategoryMapping {
      * @return
      */
     @GetMapping("/category/list")
-    @ApiOperation("根据类型查询分类")
+    @Operation(summary = "根据类型查询分类")
     public Result<List<Category>> list(Integer type){
         List<Category> list = employeeService.list(type);
         return Result.success(list);
