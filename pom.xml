@@ -31,6 +31,8 @@
         <mysql-connector>8.3.0</mysql-connector> <!-- MySQL 8.x 驱动，适配 Spring Boot 3 -->
         <mybatis-spring-boot>3.0.3</mybatis-spring-boot> <!-- MyBatis 适配 Spring Boot 3 -->
         <lombok>1.18.30</lombok> <!-- Lombok 最新版，支持 Java 21 和 Spring Boot 3 -->
+        <langchain4j>1.1.0</langchain4j>
+        <langchain4j-api>1.1.0-beta7</langchain4j-api>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -164,6 +166,29 @@
                 <groupId>com.github.wechatpay-apiv3</groupId>
                 <artifactId>wechatpay-apache-httpclient</artifactId>
                 <version>0.4.8</version>
+            </dependency>
+            <!-- langchain4j 配置-->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-community-dashscope-spring-boot-starter</artifactId>
+                <version>${langchain4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j</artifactId>
+                <version>${langchain4j}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-mcp</artifactId>
+                <version>${langchain4j}</version>
+            </dependency>
+            <!--流式响应-->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-reactor</artifactId>
+                <version>${langchain4j}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

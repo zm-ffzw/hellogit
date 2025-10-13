@@ -5,6 +5,8 @@ import com.sky.entity.Orders;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -18,5 +20,13 @@ public class OrderVO extends Orders implements Serializable {
 
     //订单详情
     private List<OrderDetail> orderDetailList;
+
+    @Override
+    public String toString() {
+        return "OrderVO{" +
+                "orderDishes='" + orderDishes + '\'' +
+                ", orderDetailList=" + orderDetailList.stream().map(OrderDetail::toString).toList() +
+                '}';
+    }
 
 }
