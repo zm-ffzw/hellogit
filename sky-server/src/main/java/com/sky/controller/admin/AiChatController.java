@@ -21,13 +21,13 @@ public class AiChatController {
     @Autowired
     private AiChatService aiChatService;
 
-    @PostMapping("/chatStream/{sessionId}")
+    @PostMapping("/chatStream/{memoryId}")
     public Flux<ServerSentEvent<String>> chatStream(
             @RequestParam String message,
-            @PathVariable String sessionId) {
+            @PathVariable String memoryId) {
 
         return aiChatService
-                .chatStream(message, "1")
+                .chatStream(message, memoryId)
                 .map(chunk -> ServerSentEvent.<String>builder()
                         .data(chunk)
                         .build()

@@ -4,12 +4,20 @@ import com.sky.entity.MyChatMemory;
 import com.sky.mapper.ChatMemoryMapper;
 import dev.langchain4j.data.message.*;
 import dev.langchain4j.memory.ChatMemory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 弃用
+ * 存储时会出现系统文案
+ */
 
 public class MysqlChatMemory implements ChatMemory {
+    private static final Logger log = LoggerFactory.getLogger(MysqlChatMemory.class);
     private final ChatMemoryMapper chatMemoryMapper;
     private final String sessionId;
 
@@ -26,7 +34,7 @@ public class MysqlChatMemory implements ChatMemory {
     @Override
     public void add(ChatMessage chatMessage) {
         // 不保存 SystemMessage
-        if (chatMessage instanceof SystemMessage) {
+        if (!(chatMessage instanceof UserMessage || chatMessage instanceof AiMessage)) {
             return;
         }
 
@@ -41,6 +49,7 @@ public class MysqlChatMemory implements ChatMemory {
     public List<ChatMessage> messages() {
         List<Map<String, Object>> rows = chatMemoryMapper.selectBySessionId(sessionId);
         ArrayList<ChatMessage> list = new ArrayList<>();
+        System.out.println("=-------------------------" + ChatMessageSerializer.messagesToJson(list));
 
         for (Map<String, Object> row : rows) {
             String role = (String) row.get("role");

@@ -171,7 +171,7 @@
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-community-dashscope-spring-boot-starter</artifactId>
-                <version>${langchain4j}</version>
+                <version>${langchain4j-api}</version>
             </dependency>
             <dependency>
                 <groupId>dev.langchain4j</groupId>
@@ -182,13 +182,13 @@
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-mcp</artifactId>
-                <version>${langchain4j}</version>
+                <version>${langchain4j-api}</version>
             </dependency>
             <!--流式响应-->
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-reactor</artifactId>
-                <version>${langchain4j}</version>
+                <version>${langchain4j-api}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
